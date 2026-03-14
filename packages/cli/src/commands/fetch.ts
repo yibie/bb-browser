@@ -49,9 +49,6 @@ async function ensureTabForOrigin(origin: string, hostname: string): Promise<num
     );
 
     if (matchingTab) {
-      if (!matchingTab.active) {
-        await sendCommand({ id: generateId(), action: "tab_select", tabId: matchingTab.tabId });
-      }
       return matchingTab.tabId;
     }
   }

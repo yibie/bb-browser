@@ -28,6 +28,7 @@ const COMMUNITY_REPO = "https://github.com/epiral/bb-sites.git";
 
 export interface SiteOptions {
   json?: boolean;
+  tabId?: number;
 }
 
 /** Adapter 参数定义 */
@@ -338,9 +339,11 @@ async function siteRun(
 
   await ensureDaemonRunning();
 
-  // 确保有正确域名的 tab（精确 origin 匹配）
-  let targetTabId: number | undefined;
-  if (site.domain) {
+  // 确定目标 tab
+  let targetTabId: number | undefined = options.tabId;
+
+  // 如果用户没指定 --tab，自动查找匹配域名的 tab
+  if (!targetTabId && site.domain) {
     const listReq: Request = { id: generateId(), action: "tab_list" };
     const listResp: Response = await sendCommand(listReq);
 
@@ -350,9 +353,6 @@ async function siteRun(
       );
       if (matchingTab) {
         targetTabId = matchingTab.tabId;
-        if (!matchingTab.active) {
-          await sendCommand({ id: generateId(), action: "tab_select", tabId: matchingTab.tabId });
-        }
       }
     }
 
@@ -380,7 +380,11 @@ async function siteRun(
 
   const result = evalResp.data?.result;
   if (result === undefined || result === null) {
-    console.log("(no output)");
+    if (options.json) {
+      console.log(JSON.stringify({ id: evalReq.id, success: true, data: null }));
+    } else {
+      console.log("(no output)");
+    }
     return;
   }
 
@@ -389,19 +393,26 @@ async function siteRun(
   try {
     parsed = typeof result === "string" ? JSON.parse(result) : result;
   } catch {
-    console.log(result);
-    return;
+    parsed = result;
   }
 
   // 检查 adapter 返回的 error
   if (typeof parsed === "object" && parsed !== null && "error" in parsed) {
     const errObj = parsed as { error: string; hint?: string };
-    console.error(`[error] site ${name}: ${errObj.error}`);
-    if (errObj.hint) console.error(`  Hint: ${errObj.hint}`);
+    if (options.json) {
+      console.log(JSON.stringify({ id: evalReq.id, success: false, error: errObj.error, hint: errObj.hint }));
+    } else {
+      console.error(`[error] site ${name}: ${errObj.error}`);
+      if (errObj.hint) console.error(`  Hint: ${errObj.hint}`);
+    }
     process.exit(1);
   }
 
-  console.log(JSON.stringify(parsed, null, 2));
+  if (options.json) {
+    console.log(JSON.stringify({ id: evalReq.id, success: true, data: parsed }));
+  } else {
+    console.log(JSON.stringify(parsed, null, 2));
+  }
 }
 
 // ── 入口 ────────────────────────────────────────────────────────

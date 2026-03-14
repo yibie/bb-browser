@@ -194,8 +194,8 @@ function parseArgs(argv: string[]): ParsedArgs {
     } else if (arg === "--id") {
       // --id 及其值由子命令通过 process.argv 自行解析，这里跳过
       skipNext = true;
-    } else if (arg === "--tab" && !result.command) {
-      // 全局 --tab 参数（出现在命令之前），跳过其值
+    } else if (arg === "--tab") {
+      // --tab 参数及其值，无论出现在命令前后都跳过
       skipNext = true;
     } else if (arg.startsWith("-")) {
       // 未知选项，忽略
@@ -588,7 +588,7 @@ async function main(): Promise<void> {
       }
 
       case "site": {
-        await siteCommand(parsed.args, { json: parsed.flags.json });
+        await siteCommand(parsed.args, { json: parsed.flags.json, tabId: globalTabId });
         break;
       }
 
