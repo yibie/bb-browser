@@ -1,6 +1,6 @@
 {
   "name": "bb-browser",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "AI Agent browser automation CLI - control Chrome with user's login state",
   "type": "module",
   "bin": {
@@ -34,24 +34,28 @@
     "cli",
     "puppeteer",
     "playwright",
-    "cdp"
+    "cdp",
+    "mcp"
   ],
   "author": "",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yan5xu/bb-browser.git"
+    "url": "git+https://github.com/epiral/bb-browser.git"
   },
   "bugs": {
-    "url": "https://github.com/yan5xu/bb-browser/issues"
+    "url": "https://github.com/epiral/bb-browser/issues"
   },
-  "homepage": "https://github.com/yan5xu/bb-browser#readme",
+  "homepage": "https://github.com/epiral/bb-browser#readme",
   "engines": {
     "node": ">=18.0.0"
   },
   "packageManager": "pnpm@9.15.0",
   "dependencies": {
-    "ws": "^8.18.0"
+    "ws": "^8.18.0",
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
   },
   "devDependencies": {
     "tsup": "^8.0.0",

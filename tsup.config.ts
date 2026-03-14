@@ -16,8 +16,7 @@ export default defineConfig({
   banner: {
     js: "#!/usr/bin/env node",
   },
-  // 内部包打包进去
-  noExternal: [/@bb-browser\/.*/],
-  // ws 使用 CommonJS 动态 require，必须保持外部依赖
+  // 全部 bundle 进去（npx 可用），只保留 ws（CommonJS 动态 require）
+  noExternal: [/.*/],
   external: ["ws"],
 });
